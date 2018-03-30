@@ -24,7 +24,7 @@ const columnSet = (num) => {
   const columns = [];
   for (let i = 0; i < num; i += 1) {
     columns.push((
-      <Column name={`Column ${i}`} cellCount={1000} />
+      <Column name={`Column ${i}`} cellCount={100} />
     ));
   }
   return columns;
@@ -36,6 +36,13 @@ class DataGrid extends React.Component {
 
     this.updateRefs = this.updateRefs.bind(this);
     this.syncOverlayScroll = this.syncOverlayScroll.bind(this);
+
+    this.enableOverlay = this.enableOverlay.bind(this);
+    this.disableOverlay = this.disableOverlay.bind(this);
+
+    // this.handleContainerScroll = this.handleContainerScroll.bind(this);
+    this.handleFillScroll = this.handleFillScroll.bind(this);
+
     this.state = {
 
     };
@@ -43,37 +50,51 @@ class DataGrid extends React.Component {
 
   componentDidMount() {
     this.overlayRef.addEventListener('scroll', this.syncOverlayScroll);
-    this.overlayRef.addEventListener('touchstart', this.handleTouchStart);
-    this.overlayRef.addEventListener('touchend', this.handleTouchEnd);
-    this.overlayRef.addEventListener('touchmove', this.handleTouchMove);
+    // this.containerRef.addEventListener('scroll', this.handleContainerScroll);
+    this.filledRef.addEventListener('scroll', this.handleFillScroll);
 
     this.updateRefs();
   }
 
-  handleTouchStart() {
-    console.log('Touch start');
+  enableOverlay() {
+    this.overlayRef.style.display = 'block';
   }
 
-  handleTouchEnd() {
-    console.log('Touch end');
-  }
-
-  handleTouchMove() {
-    console.log('Touch move');
+  disableOverlay() {
+    this.overlayRef.style.display = 'none';
   }
 
   componentWillUnmount() {
     this.overlayRef.removeEventListener('scroll', this.syncOverlayScroll);
-    this.overlayRef.removeEventListener('touchstart', this.handleTouchStart);
-    this.overlayRef.removeEventListener('touchend', this.handleTouchEnd);
-    this.overlayRef.removeEventListener('touchmove', this.handleTouchMove);
+    // this.containerRef.removeEventListener('scroll', this.handleContainerScroll);
+    this.filledRef.removeEventListener('scroll', this.handleFillScroll);
   }
 
   syncOverlayScroll() {
     console.log('scrolling');
 
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+    }
+
+    this.scrollTimeout = setTimeout(() => {
+      this.disableOverlay();
+    }, 50);
+
     this.containerRef.scrollTop = this.overlayRef.scrollTop;
     this.filledRef.scrollLeft = this.overlayRef.scrollLeft;
+  }
+
+  handleFillScroll() {
+    this.enableOverlay();
+
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+    }
+
+    this.scrollTimeout = setTimeout(() => {
+      this.disableOverlay();
+    }, 50);
   }
 
   updateRefs() {

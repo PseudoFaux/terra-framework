@@ -39,6 +39,7 @@
   }
 
   .overlay {
+    display: none;
     top: 0;
     left: 0;
     right: 0;
@@ -73,6 +74,10 @@
     border-bottom: 1px solid lightgrey;
     padding: 5px;
     overflow: hidden;
+
+    &:hover {
+      background: lightblue;
+    }
   }
 
   .header-cell {

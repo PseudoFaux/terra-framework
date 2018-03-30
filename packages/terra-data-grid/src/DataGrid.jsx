@@ -35,24 +35,54 @@ class DataGrid extends React.Component {
     super(props);
 
     this.updateRefs = this.updateRefs.bind(this);
-
+    this.syncOverlayScroll = this.syncOverlayScroll.bind(this);
     this.state = {
 
     };
   }
 
   componentDidMount() {
+    this.overlayRef.addEventListener('scroll', this.syncOverlayScroll);
+    this.overlayRef.addEventListener('touchstart', this.handleTouchStart);
+    this.overlayRef.addEventListener('touchend', this.handleTouchEnd);
+    this.overlayRef.addEventListener('touchmove', this.handleTouchMove);
+
     this.updateRefs();
   }
 
-  updateRefs() {
-    if (this.fixedRef) {
-      this.fixedRef.style.height = `${this.fixedRef.scrollHeight}px`;
+  handleTouchStart() {
+    console.log('Touch start');
+  }
 
-      if (this.filledRef) {
-        this.filledRef.style.height = `${this.fixedRef.scrollHeight}px`;
-      }
-    }
+  handleTouchEnd() {
+    console.log('Touch end');
+  }
+
+  handleTouchMove() {
+    console.log('Touch move');
+  }
+
+  componentWillUnmount() {
+    this.overlayRef.removeEventListener('scroll', this.syncOverlayScroll);
+    this.overlayRef.removeEventListener('touchstart', this.handleTouchStart);
+    this.overlayRef.removeEventListener('touchend', this.handleTouchEnd);
+    this.overlayRef.removeEventListener('touchmove', this.handleTouchMove);
+  }
+
+  syncOverlayScroll() {
+    console.log('scrolling');
+
+    this.containerRef.scrollTop = this.overlayRef.scrollTop;
+    this.filledRef.scrollLeft = this.overlayRef.scrollLeft;
+  }
+
+  updateRefs() {
+    this.fixedRef.style.height = `${this.fixedRef.scrollHeight}px`;
+    this.filledRef.style.height = `${this.fixedRef.scrollHeight}px`;
+
+    this.overlayRef.style.left = `${this.fixedRef.clientWidth}px`;
+    this.overlayContentRef.style.width = `${this.filledRef.scrollWidth}px`;
+    this.overlayContentRef.style.height = `${this.filledRef.scrollHeight}px`;
   }
 
   componentDidUpdate() {
@@ -61,12 +91,17 @@ class DataGrid extends React.Component {
 
   render() {
     return (
-      <div className={cx(['container', 'container-size-1'])}>
-        <div ref={(fixedRef) => { this.fixedRef = fixedRef; }} className={cx('fixed')}>
-          {columnSet(3)}
+      <div className={cx('data-grid-container')}>
+        <div ref={(overlayRef) => { this.overlayRef = overlayRef; }} className={cx('overlay')}>
+          <div ref={(overlayContentRef) => { this.overlayContentRef = overlayContentRef; }} className={cx('overlay-content')} />
         </div>
-        <div ref={(filledRef) => { this.filledRef = filledRef; }} className={cx('fill')}>
-          {columnSet(30)}
+        <div ref={(containerRef) => { this.containerRef = containerRef; }}className={cx(['container', 'container-size-1'])}>
+          <div ref={(fixedRef) => { this.fixedRef = fixedRef; }} className={cx('fixed')}>
+            {columnSet(3)}
+          </div>
+          <div ref={(filledRef) => { this.filledRef = filledRef; }} className={cx('fill')}>
+            {columnSet(30)}
+          </div>
         </div>
       </div>
     );

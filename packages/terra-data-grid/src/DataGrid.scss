@@ -1,9 +1,17 @@
 :local {
+  .data-grid-container {
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+  }
+
   .container {
     display: flex;
     height: 100%;
     overflow: auto;
     width: 100%;
+    position: relative;
   }
 
   .fixed {
@@ -24,6 +32,30 @@
 
     overflow-x: scroll;
     position: relative;
+
+    &::-webkit-scrollbar:horizontal {
+      display: none;
+    }
+  }
+
+  .overlay {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    z-index: 500;
+
+    &::-webkit-scrollbar:vertical {
+      display: none;
+    }
+  }
+
+  .overlay-content {
+    height: 100%;
+    z-index: 500;
   }
 
   .column {
@@ -43,14 +75,8 @@
     overflow: hidden;
   }
 
-  .header-cell + .cell {
-    margin-top: 29px;
-  }
-
   .header-cell {
     background-color: grey;
-    position: fixed;
-    width: 100px;
   }
 
   .container-size-1 {
